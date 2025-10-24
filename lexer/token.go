@@ -69,13 +69,13 @@ func TokenKindString(kind TokenKind) string {
 	case STAR:
 		return "star"
 	case OPEN_BRACKET:
-		return "open bracket"
+		return "open_bracket"
 	case CLOSE_BRACKET:
-		return "close bracket"
+		return "close_bracket"
 	case OPEN_PAREN:
-		return "open paren"
+		return "open_paren"
 	case CLOSE_PAREN:
-		return "close paren"
+		return "close_paren"
 	case COMMA:
 		return "comma"
 	case COLON:
