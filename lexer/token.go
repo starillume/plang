@@ -15,6 +15,8 @@ const (
 	IDENTIFIER
 	INT
 	FLOAT
+	STRING
+	STRING_LITERAL
 	SEMICOLON
 	PLUS
 	MINUS
@@ -28,7 +30,6 @@ const (
 	COLON
 	FUNC
 	RETURN
-	// STRING
 	// ...
 )
 
@@ -89,6 +90,10 @@ func TokenKindString(kind TokenKind) string {
 		return "fat_arrow"
 	case SLASH:
 		return "slash"
+	case STRING:
+		return "string"
+	case STRING_LITERAL:
+		return "string_literal"
 	default:
 		return ""
 	}

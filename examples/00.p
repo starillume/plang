@@ -7,4 +7,6 @@ func sum -> x int, y int: int {
 
 func inline_sun -> x int, y int: int => x - y;
 
+string aurora_name -> "alice";
+
 sum(x, y);
