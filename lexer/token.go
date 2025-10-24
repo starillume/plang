@@ -10,13 +10,23 @@ const (
 	EOF TokenKind = iota
 	NUMBER
 	ASSIGNMENT
+	ARROW
 	WHITESPACE
 	IDENTIFIER
 	INT
 	FLOAT
 	SEMICOLON
-	// OPEN_PAREN
-	// CLOSE_PAREN
+	PLUS
+	MINUS
+	STAR
+	OPEN_BRACKET
+	CLOSE_BRACKET
+	OPEN_PAREN
+	CLOSE_PAREN
+	COMMA
+	COLON
+	FUNC
+	RETURN
 	// STRING
 	// ...
 )
@@ -52,6 +62,30 @@ func TokenKindString(kind TokenKind) string {
 		return "float"
 	case SEMICOLON:
 		return "semicolon"
+	case PLUS:
+		return "plus"
+	case MINUS:
+		return "minus"
+	case STAR:
+		return "star"
+	case OPEN_BRACKET:
+		return "open bracket"
+	case CLOSE_BRACKET:
+		return "close bracket"
+	case OPEN_PAREN:
+		return "open paren"
+	case CLOSE_PAREN:
+		return "close paren"
+	case COMMA:
+		return "comma"
+	case COLON:
+		return "colon"
+	case FUNC:
+		return "func"
+	case RETURN:
+		return "return"
+	case ARROW:
+		return "arrow"
 	default:
 		return ""
 	}
