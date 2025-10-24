@@ -19,6 +19,7 @@ const (
 	PLUS
 	MINUS
 	STAR
+	SLASH
 	OPEN_BRACKET
 	CLOSE_BRACKET
 	OPEN_PAREN
@@ -86,6 +87,8 @@ func TokenKindString(kind TokenKind) string {
 		return "return"
 	case ARROW:
 		return "arrow"
+	case SLASH:
+		return "slash"
 	default:
 		return ""
 	}

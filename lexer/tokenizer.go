@@ -98,6 +98,7 @@ func newLexer(source string) *lexer {
 			createPattern(regexp.MustCompile(`^-`), MINUS),
 			createPattern(regexp.MustCompile(`^\+`), PLUS),
 			createPattern(regexp.MustCompile(`^\*`), STAR),
+			createPattern(regexp.MustCompile(`^/`), SLASH),
 			createPattern(regexp.MustCompile(`^;`), SEMICOLON),
 			createPattern(regexp.MustCompile(`^{`), OPEN_BRACKET),
 			createPattern(regexp.MustCompile(`^}`), CLOSE_BRACKET),
