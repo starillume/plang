@@ -88,7 +88,7 @@ func newLexer(source string) *lexer {
 		Tokens: make([]Token, 0),
 		patterns: []regexPattern{
 			createPattern(regexp.MustCompile(`^->`), ASSIGNMENT),
-			createPattern(regexp.MustCompile(`^=>`), ARROW),
+			createPattern(regexp.MustCompile(`^=>`), FAT_ARROW),
 			createPattern(regexp.MustCompile(`^[0-9]+(\.[0-9]+)?`), NUMBER),
 			createPattern(regexp.MustCompile(`^\bint\b`), INT),
 			createPattern(regexp.MustCompile(`^\bfloat\b`), FLOAT),

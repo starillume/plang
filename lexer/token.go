@@ -10,7 +10,7 @@ const (
 	EOF TokenKind = iota
 	NUMBER
 	ASSIGNMENT
-	ARROW
+	FAT_ARROW
 	WHITESPACE
 	IDENTIFIER
 	INT
@@ -85,8 +85,8 @@ func TokenKindString(kind TokenKind) string {
 		return "func"
 	case RETURN:
 		return "return"
-	case ARROW:
-		return "arrow"
+	case FAT_ARROW:
+		return "fat_arrow"
 	case SLASH:
 		return "slash"
 	default:
