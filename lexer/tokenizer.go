@@ -27,7 +27,7 @@ func Tokenize (source string) []Token {
 		for _, pattern := range lexer.patterns {
 			pos := pattern.regex.FindStringIndex(lexer.remainder())
 
-			if pos != nil && pos[0] == 0 {
+			if pos != nil {
 				pattern.handler(lexer)
 				matched = true
 				break
@@ -63,15 +63,10 @@ func (l *lexer) atEOF() bool {
 	return l.pos >= len(l.source)
 }
 
-func createPattern(regex *regexp.Regexp, kind TokenKind, ignore ...bool) regexPattern {
-	ig := false
-	if len(ignore) > 0 {
-		ig = ignore[0]
-	}
-
+func createPattern(regex *regexp.Regexp, kind TokenKind, ignore bool) regexPattern {
 	handler := func (lexer *lexer) {
 		match := regex.FindString(lexer.remainder())
-		if !ig {
+		if !ignore {
 			lexer.push(NewToken(kind, match))
 		}
 
@@ -87,27 +82,27 @@ func newLexer(source string) *lexer {
 		source: source,
 		Tokens: make([]Token, 0),
 		patterns: []regexPattern{
-			createPattern(regexp.MustCompile(`^->`), ASSIGNMENT),
-			createPattern(regexp.MustCompile(`^=>`), FAT_ARROW),
-			createPattern(regexp.MustCompile(`^[0-9]+(\.[0-9]+)?`), NUMBER),
-			createPattern(regexp.MustCompile(`^\bint\b`), INT),
-			createPattern(regexp.MustCompile(`^\bfloat\b`), FLOAT),
-			createPattern(regexp.MustCompile(`^\bstring\b`), STRING),
-			createPattern(regexp.MustCompile(`^\bfunc\b`), FUNC),
-			createPattern(regexp.MustCompile(`^\breturn\b`), RETURN),
-			createPattern(regexp.MustCompile(`^"[^"]*"`), STRING_LITERAL),
-			createPattern(regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*`), IDENTIFIER),
-			createPattern(regexp.MustCompile(`^-`), MINUS),
-			createPattern(regexp.MustCompile(`^\+`), PLUS),
-			createPattern(regexp.MustCompile(`^\*`), STAR),
-			createPattern(regexp.MustCompile(`^/`), SLASH),
-			createPattern(regexp.MustCompile(`^;`), SEMICOLON),
-			createPattern(regexp.MustCompile(`^{`), OPEN_BRACKET),
-			createPattern(regexp.MustCompile(`^}`), CLOSE_BRACKET),
-			createPattern(regexp.MustCompile(`^\(`), OPEN_PAREN),
-			createPattern(regexp.MustCompile(`^\)`), CLOSE_PAREN),
-			createPattern(regexp.MustCompile(`^,`), COMMA),
-			createPattern(regexp.MustCompile(`^:`), COLON),
+			createPattern(regexp.MustCompile(`^->`), TokenKind(ASSIGNMENT), false),
+			createPattern(regexp.MustCompile(`^=>`), FAT_ARROW, false),
+			createPattern(regexp.MustCompile(`^[0-9]+(\.[0-9]+)?`), NUMBER, false),
+			createPattern(regexp.MustCompile(`^\bint\b`), TokenKind(INT), false),
+			createPattern(regexp.MustCompile(`^\bfloat\b`), TokenKind(FLOAT), false),
+			createPattern(regexp.MustCompile(`^\bstring\b`), TokenKind(STRING), false),
+			createPattern(regexp.MustCompile(`^\bfunc\b`), TokenKind(FUNC), false),
+			createPattern(regexp.MustCompile(`^\breturn\b`), TokenKind(RETURN), false),
+			createPattern(regexp.MustCompile(`^"[^"]*"`), STRING_LITERAL, false),
+			createPattern(regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*`), IDENTIFIER, false),
+			createPattern(regexp.MustCompile(`^-`), TokenKind(MINUS), false),
+			createPattern(regexp.MustCompile(`^\+`), TokenKind(PLUS), false),
+			createPattern(regexp.MustCompile(`^\*`), TokenKind(STAR), false),
+			createPattern(regexp.MustCompile(`^/`), TokenKind(SLASH), false),
+			createPattern(regexp.MustCompile(`^;`), SEMICOLON, false),
+			createPattern(regexp.MustCompile(`^{`), OPEN_BRACKET, false),
+			createPattern(regexp.MustCompile(`^}`), CLOSE_BRACKET, false),
+			createPattern(regexp.MustCompile(`^\(`), OPEN_PAREN, false),
+			createPattern(regexp.MustCompile(`^\)`), CLOSE_PAREN, false),
+			createPattern(regexp.MustCompile(`^,`), COMMA, false),
+			createPattern(regexp.MustCompile(`^:`), COLON, false),
 			createPattern(regexp.MustCompile(`^\s+`), WHITESPACE, true),
 		},
 	}

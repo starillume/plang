@@ -2,99 +2,127 @@ package lexer
 
 import (
 	"fmt"
+	"slices"
 )
 
-type TokenKind int
+type Keyword TokenKind
 
 const (
-	EOF TokenKind = iota
-	NUMBER
-	ASSIGNMENT
-	FAT_ARROW
-	WHITESPACE
-	IDENTIFIER
-	INT
-	FLOAT
-	STRING
-	STRING_LITERAL
-	SEMICOLON
-	PLUS
-	MINUS
-	STAR
-	SLASH
-	OPEN_BRACKET
-	CLOSE_BRACKET
-	OPEN_PAREN
-	CLOSE_PAREN
-	COMMA
-	COLON
-	FUNC
-	RETURN
-	// ...
+	INT Keyword = "int"
+	FLOAT Keyword = "float"
+	STRING Keyword = "string"
+	FUNC Keyword = "func"
+	RETURN Keyword = "return"
 )
 
-type Token struct {
+var keywords []Keyword = []Keyword{
+	INT, FLOAT, FUNC, RETURN, STRING,
+}
+
+type Operation TokenKind
+
+const (
+	ASSIGNMENT Operation = "assignment"
+	PLUS Operation = "plus"
+	MINUS Operation = "minus"
+	STAR Operation = "star"
+	SLASH Operation = "slash"
+)
+
+var operations []Operation = []Operation{
+	ASSIGNMENT, MINUS, PLUS, SLASH, STAR,
+}
+
+type TokenKind string
+
+const (
+	EOF TokenKind = "eof"
+	NUMBER TokenKind = "number"
+	FAT_ARROW TokenKind = "fat_arrow"
+	WHITESPACE TokenKind = "whitespace"
+	IDENTIFIER TokenKind = "identifier"
+	STRING_LITERAL TokenKind = "string_literal"
+	SEMICOLON TokenKind = "semicolon"
+	OPEN_BRACKET TokenKind = "open_bracket"
+	CLOSE_BRACKET TokenKind = "close_bracket"
+	OPEN_PAREN TokenKind = "open_paren"
+	CLOSE_PAREN TokenKind = "close_paren"
+	COMMA TokenKind = "comma"
+	COLON TokenKind = "colon"
+)
+
+type TokenResolver func (k TokenKind, v string) (Token, bool)
+
+var resolvers []TokenResolver = []TokenResolver{
+	func (k TokenKind, v string) (Token, bool) { return tryTokenType[Keyword, KeywordToken](k, v, keywords) },
+	func (k TokenKind, v string) (Token, bool) { return tryTokenType[Operation, OperationToken](k, v, operations) },
+}
+
+type Token interface {
+	Debug()
+	new(TokenKind, string) Token
+}
+
+type GenericToken struct {
 	Kind TokenKind
 	Value string
 }
 
-func (t Token) Debug() {
-	fmt.Printf("token kind: %s, token value: %s\n", TokenKindString(t.Kind), t.Value)
+func (t GenericToken) Debug() {
+	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
+}
+
+func (t GenericToken) new(kind TokenKind, value string) Token {
+	return GenericToken{
+		kind, value,
+	}
+}
+
+type KeywordToken struct {
+	Kind Keyword
+	Value string
+}
+
+func (t KeywordToken) Debug() {
+	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
+}
+
+func (t KeywordToken) new(kind TokenKind, value string) Token {
+	return KeywordToken{
+		Keyword(kind), value,
+	}
+}
+
+type OperationToken struct {
+	Kind Operation
+	Value string
+}
+
+func (t OperationToken) new(kind TokenKind, value string) Token {
+	return OperationToken{
+		Operation(kind), value,
+	}
+}
+
+func (t OperationToken) Debug() {
+	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
+}
+
+func tryTokenType[K ~string, T Token](kind TokenKind, value string, kinds []K) (Token, bool) {
+	var t T = *new(T)
+	if _, ok := slices.BinarySearch(kinds, K(kind)); ok {
+		return t.new(kind, value), true
+	}
+
+	return nil, false
 }
 
 func NewToken(kind TokenKind, value string) Token {
-	return Token{Kind: kind, Value: value}
-}
-
-func TokenKindString(kind TokenKind) string {
-	switch kind {
-	case EOF:
-		return "EOF"
-	case NUMBER:
-		return "number"
-	case ASSIGNMENT:
-		return "assignment"
-	case WHITESPACE:
-		return "whitespace"
-	case IDENTIFIER:
-		return "identifier"
-	case INT:
-		return "int"
-	case FLOAT:
-		return "float"
-	case SEMICOLON:
-		return "semicolon"
-	case PLUS:
-		return "plus"
-	case MINUS:
-		return "minus"
-	case STAR:
-		return "star"
-	case OPEN_BRACKET:
-		return "open_bracket"
-	case CLOSE_BRACKET:
-		return "close_bracket"
-	case OPEN_PAREN:
-		return "open_paren"
-	case CLOSE_PAREN:
-		return "close_paren"
-	case COMMA:
-		return "comma"
-	case COLON:
-		return "colon"
-	case FUNC:
-		return "func"
-	case RETURN:
-		return "return"
-	case FAT_ARROW:
-		return "fat_arrow"
-	case SLASH:
-		return "slash"
-	case STRING:
-		return "string"
-	case STRING_LITERAL:
-		return "string_literal"
-	default:
-		return ""
+	for _, resolver := range resolvers {
+		if val, ok := resolver(kind, value); ok {
+			return val
+		}
 	}
+
+	return GenericToken{kind, value}
 }

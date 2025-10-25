@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+
 	"github.com/starillume/plang/lexer"
 )
 
@@ -10,6 +12,11 @@ func main() {
 	tokens := lexer.Tokenize(string(bytes))
 
 	for _, token := range tokens {
-		token.Debug()
+		switch token := token.(type) {
+		case lexer.OperationToken:
+			fmt.Println("operation: ", token.Value)
+		case lexer.KeywordToken:
+			fmt.Println("keyword: ", token.Value)
+		}
 	}
 }
