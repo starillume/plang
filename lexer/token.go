@@ -5,33 +5,54 @@ import (
 	"slices"
 )
 
-type Keyword TokenKind
-
 const (
-	INT Keyword = "int"
-	FLOAT Keyword = "float"
-	STRING Keyword = "string"
-	FUNC Keyword = "func"
-	RETURN Keyword = "return"
+	INT TokenKind = "int"
+	FLOAT TokenKind = "float"
+	STRING TokenKind = "string"
+	BOOLEAN TokenKind = "boolean"
+	TRUE TokenKind = "true"
+	FALSE TokenKind = "false"
+	FUNC TokenKind = "func"
+	RETURN TokenKind = "return"
+	IF TokenKind = "if"
+	ELSE TokenKind = "else"
+	IMPORT TokenKind = "import"
 )
 
-var keywords []Keyword = []Keyword{
-	INT, FLOAT, FUNC, RETURN, STRING,
+var keywords []TokenKind = []TokenKind{
+	BOOLEAN, ELSE, IF, IMPORT, INT, FLOAT, FUNC, RETURN, STRING,
 }
 
-type Operation TokenKind
 
 const (
-	ASSIGNMENT Operation = "assignment"
-	PLUS Operation = "plus"
-	MINUS Operation = "minus"
-	STAR Operation = "star"
-	SLASH Operation = "slash"
+	ASSIGNMENT TokenKind = "assignment"
+	PLUS TokenKind = "plus"
+	MINUS TokenKind = "minus"
+	STAR TokenKind = "star"
+	SLASH TokenKind = "slash"
 )
 
-var operations []Operation = []Operation{
+var operations []TokenKind = []TokenKind{
 	ASSIGNMENT, MINUS, PLUS, SLASH, STAR,
 }
+
+
+const (
+	EQUALS TokenKind = "equals"
+	NOT_EQUALS TokenKind = "not_equals"
+	GREATER_THAN TokenKind = "greater_than"
+	GREATER_OR_EQUAL TokenKind = "greater_or_equal"
+	LESS_THAN TokenKind = "less_than"
+	LESS_OR_EQUAL TokenKind = "less_or_equal"
+	AND TokenKind = "and"
+	OR TokenKind = "or"
+	NOT TokenKind = "not"
+)
+
+var conditionals []TokenKind = []TokenKind{
+	AND, EQUALS, GREATER_OR_EQUAL, GREATER_THAN, LESS_OR_EQUAL, LESS_THAN, NOT, NOT_EQUALS, OR,
+}
+
 
 type TokenKind string
 
@@ -49,27 +70,24 @@ const (
 	CLOSE_PAREN TokenKind = "close_paren"
 	COMMA TokenKind = "comma"
 	COLON TokenKind = "colon"
+	COMMENT TokenKind = "comment"
 )
 
 type TokenResolver func (k TokenKind, v string) (Token, bool)
 
 var resolvers []TokenResolver = []TokenResolver{
-	func (k TokenKind, v string) (Token, bool) { return tryTokenType[Keyword, KeywordToken](k, v, keywords) },
-	func (k TokenKind, v string) (Token, bool) { return tryTokenType[Operation, OperationToken](k, v, operations) },
+	func (k TokenKind, v string) (Token, bool) { return tryTokenType[KeywordToken](k, v, keywords) },
+	func (k TokenKind, v string) (Token, bool) { return tryTokenType[OperationToken](k, v, operations) },
+	func (k TokenKind, v string) (Token, bool) { return tryTokenType[ConditionalToken](k, v, conditionals) },
 }
 
 type Token interface {
-	Debug()
 	new(TokenKind, string) Token
 }
 
 type GenericToken struct {
 	Kind TokenKind
 	Value string
-}
-
-func (t GenericToken) Debug() {
-	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
 }
 
 func (t GenericToken) new(kind TokenKind, value string) Token {
@@ -79,38 +97,42 @@ func (t GenericToken) new(kind TokenKind, value string) Token {
 }
 
 type KeywordToken struct {
-	Kind Keyword
+	Kind TokenKind
 	Value string
-}
-
-func (t KeywordToken) Debug() {
-	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
 }
 
 func (t KeywordToken) new(kind TokenKind, value string) Token {
 	return KeywordToken{
-		Keyword(kind), value,
+		kind, value,
 	}
 }
 
 type OperationToken struct {
-	Kind Operation
+	Kind TokenKind
 	Value string
 }
 
 func (t OperationToken) new(kind TokenKind, value string) Token {
 	return OperationToken{
-		Operation(kind), value,
+		kind, value,
 	}
 }
 
-func (t OperationToken) Debug() {
-	fmt.Printf("token kind: %s, token value: %s\n", t.Kind, t.Value)
+type ConditionalToken struct {
+	Kind TokenKind
+	Value string
 }
 
-func tryTokenType[K ~string, T Token](kind TokenKind, value string, kinds []K) (Token, bool) {
+func (t ConditionalToken) new(kind TokenKind, value string) Token {
+	return ConditionalToken{
+		kind, value,
+	}
+}
+
+
+func tryTokenType[T Token](kind TokenKind, value string, kinds []TokenKind) (Token, bool) {
 	var t T = *new(T)
-	if _, ok := slices.BinarySearch(kinds, K(kind)); ok {
+	if _, ok := slices.BinarySearch(kinds, kind); ok {
 		return t.new(kind, value), true
 	}
 
@@ -125,4 +147,8 @@ func NewToken(kind TokenKind, value string) Token {
 	}
 
 	return GenericToken{kind, value}
+}
+
+func DebugToken(token Token) {
+	fmt.Printf("Token%+v\n", token)
 }
