@@ -21,3 +21,23 @@ type VarDeclarationStatement struct {
 }
 
 func (v VarDeclarationStatement) statement() {}
+
+type FuncDeclarationStatement struct {
+	Name string
+	Params []FuncParam
+	Body BlockStatement
+	ReturnType lexer.Token
+}
+
+func (v FuncDeclarationStatement) statement() {}
+
+type ResturnStatement struct {
+	Value Expr
+}
+
+func (v ResturnStatement) statement() {}
+
+type FuncParam struct {
+	Name string
+	Type lexer.Token
+}

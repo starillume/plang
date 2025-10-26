@@ -77,5 +77,7 @@ func createTokenLookups() {
 	statement(lexer.INT, parseVarDeclarationStatement)
 	statement(lexer.FLOAT, parseVarDeclarationStatement)
 	statement(lexer.BOOLEAN, parseVarDeclarationStatement)
+	statement(lexer.FUNC, parseFuncDeclarationStatement)
+	statement(lexer.RETURN, parseReturnStatement)
 }
 
