@@ -23,7 +23,7 @@ func parseExpr(p *parser, bp bindingPower) ast.Expr {
 			panic(fmt.Sprintf("led handler expected for token %s\n", tokenKind))
 		}
 
-		left = lHandler(p, left, bp)
+		left = lHandler(p, left, bps[p.currentToken().Kind])
 	}
 
 	return left
@@ -52,4 +52,33 @@ func parseBinaryExpr(p *parser, left ast.Expr, bp bindingPower) ast.Expr {
 		Operator: operatorToken,
 		Right: right,
 	}
+}
+
+func parseAssignmentExpr(p *parser, left ast.Expr, bp bindingPower) ast.Expr {
+	operatorToken := p.advance()
+	right := parseExpr(p, bp)
+	
+	return ast.AssignmentExpr{
+		Operator: operatorToken,
+		Assignee: left,
+		Value: right,
+	}
+}
+
+func parsePrefixExpr(p *parser) ast.Expr {
+	operatorToken := p.advance()
+	right := parseExpr(p, defaultBinding)
+
+	return ast.PrefixExpr{
+		Operator: operatorToken, 
+		Right: right,
+	}
+}
+
+func parseGroupExpr(p *parser) ast.Expr {
+	p.advance()
+	expr := parseExpr(p, defaultBinding)
+	p.expect(lexer.CLOSE_PAREN)
+
+	return expr
 }

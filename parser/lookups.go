@@ -40,8 +40,7 @@ func led(kind lexer.TokenKind, bp bindingPower, handler ledHandler) {
 	leds[kind] = handler
 }
 
-func nud(kind lexer.TokenKind, bp bindingPower, handler nudHandler) {
-	bps[kind] = bp
+func nud(kind lexer.TokenKind, handler nudHandler) {
 	nuds[kind] = handler
 }
 
@@ -51,6 +50,8 @@ func statement(kind lexer.TokenKind, handler statementHandler) {
 }
 
 func createTokenLookups() {
+	led(lexer.ASSIGNMENT, assignment, parseAssignmentExpr)
+
 	led(lexer.AND, logical, parseBinaryExpr)
 	led(lexer.OR, logical, parseBinaryExpr)
 
@@ -67,8 +68,14 @@ func createTokenLookups() {
 	led(lexer.STAR, multiplicative, parseBinaryExpr)
 	led(lexer.SLASH, multiplicative, parseBinaryExpr)
 
-	nud(lexer.NUMBER, primary, parsePrimaryExpr)
-	nud(lexer.STRING_LITERAL, primary, parsePrimaryExpr)
-	nud(lexer.IDENTIFIER, primary, parsePrimaryExpr)
+	nud(lexer.NUMBER, parsePrimaryExpr)
+	nud(lexer.STRING_LITERAL, parsePrimaryExpr)
+	nud(lexer.IDENTIFIER, parsePrimaryExpr)
+	nud(lexer.MINUS, parsePrefixExpr)
+	nud(lexer.OPEN_PAREN, parseGroupExpr)
+
+	statement(lexer.INT, parseVarDeclarationStatement)
+	statement(lexer.FLOAT, parseVarDeclarationStatement)
+	statement(lexer.BOOLEAN, parseVarDeclarationStatement)
 }
 

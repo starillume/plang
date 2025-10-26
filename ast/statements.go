@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/starillume/plang/lexer"
+
 type BlockStatement struct {
 	Body []Statement
 }
@@ -11,3 +13,11 @@ type ExprStatement struct {
 }
 
 func (e ExprStatement) statement() {}
+
+type VarDeclarationStatement struct {
+	Name string
+	Assigned Expr
+	Type lexer.TokenKind
+}
+
+func (v VarDeclarationStatement) statement() {}

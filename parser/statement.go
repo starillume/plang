@@ -16,3 +16,17 @@ func parseStatement(p *parser) ast.Statement {
 
 	return ast.ExprStatement{Expr: expr}
 }
+
+func parseVarDeclarationStatement(p *parser) ast.Statement {
+	var assigned ast.Expr
+
+	typ := p.advance().Kind
+	name := p.expectError(lexer.IDENTIFIER, "invalid variable declaration").Value
+	if p.currentToken().Kind != lexer.SEMICOLON {
+		p.expect(lexer.ASSIGNMENT)
+		assigned = parseExpr(p, assignment)
+	}
+	p.expect(lexer.SEMICOLON)
+
+	return ast.VarDeclarationStatement{Name: name, Assigned: assigned, Type: typ}
+}
