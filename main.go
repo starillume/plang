@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+
 	"github.com/starillume/plang/lexer"
 )
 
@@ -10,6 +11,6 @@ func main() {
 	tokens := lexer.Tokenize(string(bytes))
 
 	for _, token := range tokens {
-		token.Debug()
+		lexer.DebugToken(token)
 	}
 }
