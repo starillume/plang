@@ -95,7 +95,7 @@ func newLexer(source string) *lexer {
 			createPattern(regexp.MustCompile(`^=>`), FAT_ARROW, false),
 			createPattern(regexp.MustCompile(`^<`), LESS_THAN, false),
 			createPattern(regexp.MustCompile(`^>`), GREATER_THAN, false),
-			createPattern(regexp.MustCompile(`^[0-9]+(\.[0-9]+)?`), NUMBER, false),
+			createPattern(regexp.MustCompile(`^\b[0-9]+(\.[0-9]+)?\b`), NUMBER, false),
 			createPattern(regexp.MustCompile(`^\bint\b`), INT, false),
 			createPattern(regexp.MustCompile(`^\bfloat\b`), FLOAT, false),
 			createPattern(regexp.MustCompile(`^\bstring\b`), STRING, false),
