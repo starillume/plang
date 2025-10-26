@@ -1,16 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/starillume/plang/lexer"
+	"github.com/starillume/plang/parser"
 )
 
 func main() {
-	bytes, _ := os.ReadFile("./examples/00.p")
+	bytes, _ := os.ReadFile("./examples/01.p")
 	tokens := lexer.Tokenize(string(bytes))
 
-	for _, token := range tokens {
-		lexer.DebugToken(token)
-	}
+	ast := parser.Parse(tokens)
+	fmt.Printf("+%v\n", ast)
 }
